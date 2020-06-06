@@ -96,7 +96,7 @@ type Message struct {
 	MediaGroupID          string                `json:"media_group_id"`
 	AuthorSignature       string                `json:"author_signature"`
 	Text                  string                `json:"text"`
-	Entities              *MessageEntity        `json:"entities"`
+	Entities              *[]MessageEntity      `json:"entities"`
 	Animation             *Animation            `json:"animation"`
 	Audio                 *Audio                `json:"audio"`
 	Document              *Document             `json:"document"`
@@ -185,4 +185,22 @@ type PassportData struct {
 }
 
 type InlineKeyboardMarkup struct {
+}
+
+func (m *Message) IsCommand() bool {
+	if m.Entities == nil || len(*m.Entities) == 0 {
+		return false
+	}
+
+	entity := (*m.Entities)[0]
+	return entity.Offset == 0 && entity.Type == "bot_command"
+}
+
+func (m *Message) Command() string {
+	if !m.IsCommand() {
+		return ""
+	}
+
+	entity := (*m.Entities)[0]
+	return m.Text[1:entity.Length]
 }

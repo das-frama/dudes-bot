@@ -26,12 +26,22 @@ func main() {
 	}
 
 	for update := range updates {
-		// reply := "Не знаю, что вам сказать на это."
+		reply := "И хоть это странно, что я реагирую на каждую фразу тем же сообщением, я нахожу в этом красоту и равновесие."
 		if update.Message == nil {
 			continue
 		}
 
 		log.Printf("[%s] %s", update.Message.From.Username, update.Message.Text)
+		switch update.Message.Command() {
+		case "start":
+			reply = "А я уже запущен."
+		case "joke":
+			reply = "Если ваш крем от морщин действует, то почему у вас до сих пор есть отпечатки пальцев?"
+		}
+		tgBot.SendMessage(bot.SendMessageConfig{
+			ChatID: update.Message.Chat.ID,
+			Text:   reply,
+		})
 	}
 
 }
