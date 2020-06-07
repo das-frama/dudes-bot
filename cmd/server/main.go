@@ -20,28 +20,34 @@ func main() {
 		Timeout: 60,
 	}
 
+	// Get updates channel.
 	updates, err := tgBot.GetUpdatesChan(updateConfig)
 	if err != nil {
 		log.Fatalln("error")
 	}
 
 	for update := range updates {
-		reply := "И хоть это странно, что я реагирую на каждую фразу тем же сообщением, я нахожу в этом красоту и равновесие."
 		if update.Message == nil {
 			continue
 		}
 
 		log.Printf("[%s] %s", update.Message.From.Username, update.Message.Text)
+		var reply string
 		switch update.Message.Command() {
 		case "start":
 			reply = "А я уже запущен."
 		case "joke":
 			reply = "Если ваш крем от морщин действует, то почему у вас до сих пор есть отпечатки пальцев?"
+		case "judge":
+			reply = "Хороший выбор! Однако я ещё не научился быть как Дредд, поэтому пускай будет прав тот, кто первым меня об этом попросил."
+		case "bk":
+			reply = "Хм... Дайте подумать... Простите, я не знаю, что такое 'БК'. Если это какой-то ресторан быстрого питания, то боюсь, я огорчу вас своим ответом."
 		}
-		tgBot.SendMessage(bot.SendMessageConfig{
-			ChatID: update.Message.Chat.ID,
-			Text:   reply,
-		})
+		if reply != "" {
+			tgBot.SendMessage(bot.SendMessageConfig{
+				ChatID: update.Message.Chat.ID,
+				Text:   reply,
+			})
+		}
 	}
-
 }

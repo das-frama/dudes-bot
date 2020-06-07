@@ -1,6 +1,9 @@
 package bot
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"strings"
+)
 
 type Response struct {
 	Ok          bool            `json:"ok"`
@@ -187,6 +190,7 @@ type PassportData struct {
 type InlineKeyboardMarkup struct {
 }
 
+// IsCommand returns true if message starts with a "bot_command" entity.
 func (m *Message) IsCommand() bool {
 	if m.Entities == nil || len(*m.Entities) == 0 {
 		return false
@@ -196,11 +200,19 @@ func (m *Message) IsCommand() bool {
 	return entity.Offset == 0 && entity.Type == "bot_command"
 }
 
+// Command checks if the message was a command and if it was, returns the
+// command. If the Message was not a command, it returns an empty string.
 func (m *Message) Command() string {
 	if !m.IsCommand() {
 		return ""
 	}
 
 	entity := (*m.Entities)[0]
-	return m.Text[1:entity.Length]
+	command := m.Text[1:entity.Length]
+
+	if i := strings.Index(command, "@"); i != -1 {
+		command = command[:i]
+	}
+
+	return command
 }
