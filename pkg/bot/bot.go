@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-// BaseURL
+// BaseURL is base url for telegram api.
 const BaseURL = "https://api.telegram.org/bot%s/%s"
 
 type Bot struct {

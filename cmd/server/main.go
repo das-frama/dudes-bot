@@ -2,52 +2,55 @@ package main
 
 import (
 	"das-frama/dudes-bot/pkg/bot"
+	"das-frama/dudes-bot/pkg/command"
 	"log"
 	"os"
 )
 
 func main() {
+	// Get bot api token.
 	token := os.Getenv("BOT_TOKEN")
-
 	if token == "" {
 		log.Fatalln("$BOT_TOKEN must be set.")
 	}
 
+	// Create telegram bot instance.
 	tgBot := bot.New(token)
-	updateConfig := bot.UpdateConfig{
+
+	// Get updates channel.
+	updates, err := tgBot.GetUpdatesChan(bot.UpdateConfig{
 		Offset:  0,
 		Limit:   0,
 		Timeout: 60,
-	}
-
-	// Get updates channel.
-	updates, err := tgBot.GetUpdatesChan(updateConfig)
+	})
 	if err != nil {
-		log.Fatalln("error")
+		log.Fatalln(err)
 	}
 
+	// Get through channels.
 	for update := range updates {
 		if update.Message == nil {
 			continue
 		}
 
+		// Log incoming message.
 		log.Printf("[%s] %s", update.Message.From.Username, update.Message.Text)
-		var reply string
-		switch update.Message.Command() {
-		case "start":
-			reply = "А я уже запущен."
-		case "joke":
-			reply = "Если ваш крем от морщин действует, то почему у вас до сих пор есть отпечатки пальцев?"
-		case "judge":
-			reply = "Хороший выбор! Однако я ещё не научился быть как Дредд, поэтому пускай будет прав тот, кто первым меня об этом попросил."
-		case "bk":
-			reply = "Хм... Дайте подумать... Простите, я не знаю, что такое 'БК'. Если это какой-то ресторан быстрого питания, то боюсь, я огорчу вас своим ответом."
-		}
-		if reply != "" {
-			tgBot.SendMessage(bot.SendMessageConfig{
-				ChatID: update.Message.Chat.ID,
-				Text:   reply,
-			})
+
+		// If message is command then proccess it.
+		if update.Message.IsCommand() {
+			reply, err := command.Process(update.Message.Command())
+			if err != nil {
+				log.Println(err.Error())
+			}
+			if reply != "" {
+				// Send message.
+				tgBot.SendMessage(bot.SendMessageConfig{
+					ChatID: update.Message.Chat.ID,
+					Text:   reply,
+				})
+			}
 		}
 	}
+
+	log.Println("Shutting down...")
 }
