@@ -6,15 +6,15 @@ type CommandResponse struct {
 	Reply string
 }
 
-var commandMap = map[string]func() CommandResponse{
+var commandMap = map[string]func(string) CommandResponse{
 	"start":    start,
 	"ping":     ping,
 	"schedule": schedule,
 }
 
-func Process(cmd string) (string, error) {
+func Process(cmd string, params string) (string, error) {
 	if fn, ok := commandMap[cmd]; ok {
-		return fn().Reply, nil
+		return fn(params).Reply, nil
 	}
 
 	return "", fmt.Errorf("wrong command")

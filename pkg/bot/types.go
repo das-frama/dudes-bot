@@ -202,17 +202,18 @@ func (m *Message) IsCommand() bool {
 
 // Command checks if the message was a command and if it was, returns the
 // command. If the Message was not a command, it returns an empty string.
-func (m *Message) Command() string {
+func (m *Message) Command() (string, string) {
 	if !m.IsCommand() {
-		return ""
+		return "", ""
 	}
 
 	entity := (*m.Entities)[0]
 	command := m.Text[1:entity.Length]
+	params := m.Text[entity.Length:]
 
 	if i := strings.Index(command, "@"); i != -1 {
 		command = command[:i]
 	}
 
-	return command
+	return command, strings.TrimSpace(params)
 }
