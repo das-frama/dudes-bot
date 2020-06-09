@@ -56,3 +56,10 @@ func schedule(msg string) CommandResponse {
 		Reply: fmt.Sprintf(reply, strings.Title(verb)),
 	}
 }
+
+func call(msg string) CommandResponse {
+	reply := fmt.Sprintf("Мне поступила комнда, чтобы я всех призвал %s.", msg)
+	return CommandResponse{
+		Reply: reply,
+	}
+}

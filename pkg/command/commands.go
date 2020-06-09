@@ -10,6 +10,7 @@ var commandMap = map[string]func(string) CommandResponse{
 	"start":    start,
 	"ping":     ping,
 	"schedule": schedule,
+	"call":     call,
 }
 
 func Process(cmd string, params string) (string, error) {
