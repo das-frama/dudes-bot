@@ -38,8 +38,8 @@ func main() {
 
 		// If message is command then proccess it.
 		if update.Message.IsCommand() {
-			cmd, params := update.Message.Command()
-			reply, err := command.Process(cmd, params)
+			cmd := update.Message.Command()
+			reply, err := command.Process(cmd, update)
 			if err != nil {
 				log.Println(err.Error())
 			}

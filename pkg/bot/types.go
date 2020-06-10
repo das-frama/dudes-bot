@@ -202,18 +202,39 @@ func (m *Message) IsCommand() bool {
 
 // Command checks if the message was a command and if it was, returns the
 // command. If the Message was not a command, it returns an empty string.
-func (m *Message) Command() (string, string) {
+func (m *Message) Command() string {
 	if !m.IsCommand() {
-		return "", ""
+		return ""
 	}
 
 	entity := (*m.Entities)[0]
 	command := m.Text[1:entity.Length]
-	params := m.Text[entity.Length:]
 
 	if i := strings.Index(command, "@"); i != -1 {
 		command = command[:i]
 	}
 
-	return command, strings.TrimSpace(params)
+	return command
+}
+
+// Params return a slice splitted by space.
+func (m *Message) Params() []string {
+	if !m.IsCommand() {
+		return []string{}
+	}
+
+	entity := (*m.Entities)[0]
+	return strings.Split(m.Text[entity.Length:], " ")
+}
+
+func (m *Message) Mentions() []string {
+	mentions := make([]string, 0)
+	for _, entity := range *m.Entities {
+		if entity.Type == "mention" {
+			user := m.Text[entity.Offset : entity.Offset+entity.Length]
+			mentions = append(mentions, user)
+		}
+	}
+
+	return mentions
 }

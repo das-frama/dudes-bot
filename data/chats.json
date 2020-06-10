@@ -1,0 +1,34 @@
+[
+  {
+    "id": 101920724,
+    "type": "private",
+    "title": "",
+    "username": "das_frama",
+    "first_name": "А.",
+    "last_name": "",
+    "photo": null,
+    "description": "",
+    "invite_link": "",
+    "pinned_message": null,
+    "permissions": null,
+    "slow_mode_delay": 0,
+    "sticker_set_name": "",
+    "can_set_sticker_set": false
+  },
+  {
+    "id": -1001338534676,
+    "type": "supergroup",
+    "title": "Nude Dudes",
+    "username": "",
+    "first_name": "",
+    "last_name": "",
+    "photo": null,
+    "description": "",
+    "invite_link": "",
+    "pinned_message": null,
+    "permissions": null,
+    "slow_mode_delay": 0,
+    "sticker_set_name": "",
+    "can_set_sticker_set": false
+  }
+]
