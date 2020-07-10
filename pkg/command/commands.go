@@ -5,22 +5,28 @@ import (
 	"fmt"
 )
 
-type CommandResponse struct {
-	Reply string
+// Response is a result of command process.
+type Response struct {
+	Text  string
+	Photo string
 }
 
-var commandMap = map[string]func(bot.Update) CommandResponse{
+var commandMap = map[string]func(bot.Update) Response{
 	"start":     start,
+	"stop":      stop,
 	"ping":      ping,
 	"schedule":  schedule,
 	"call":      call,
 	"overwatch": overwatch,
+	"cat":       cat,
 }
 
-func Process(cmd string, update bot.Update) (string, error) {
-	if fn, ok := commandMap[cmd]; ok {
-		return fn(update).Reply, nil
+// Process handles the command and returns a response struct.
+func Process(cmd string, update bot.Update) (Response, error) {
+	fn, ok := commandMap[cmd]
+	if !ok {
+		return Response{}, fmt.Errorf("wrong command")
 	}
 
-	return "", fmt.Errorf("wrong command")
+	return fn(update), nil
 }

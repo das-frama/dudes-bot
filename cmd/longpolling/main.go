@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	// Get bot api token.
+	// Get bot api token from env.
 	token := os.Getenv("BOT_TOKEN")
 	if token == "" {
 		log.Fatalln("$BOT_TOKEN must be set.")
@@ -36,20 +36,21 @@ func main() {
 		// Log incoming message.
 		log.Printf("[%s] %s", update.Message.From.Username, update.Message.Text)
 
-		// If message is command then proccess it.
+		// If message is command.
 		if update.Message.IsCommand() {
 			cmd := update.Message.Command()
-			reply, err := command.Process(cmd, update)
+
+			// Procces command if possible.
+			response, err := command.Process(cmd, update)
 			if err != nil {
 				log.Println(err.Error())
 			}
-			if reply != "" {
-				// Send message.
-				tgBot.SendMessage(bot.SendMessageConfig{
-					ChatID: update.Message.Chat.ID,
-					Text:   reply,
-				})
-			}
+
+			// Send message.
+			tgBot.SendMessage(bot.SendMessageConfig{
+				ChatID: update.Message.Chat.ID,
+				Text:   response.Text,
+			})
 		}
 	}
 

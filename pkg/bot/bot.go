@@ -104,6 +104,21 @@ func (bot *Bot) SendMessage(config SendMessageConfig) (Message, error) {
 	return message, nil
 }
 
+// SendPhoto send text messages. On success, the sent Message is returned.
+func (bot *Bot) SendPhoto(config SendPhotoConfig) (Message, error) {
+	v, _ := config.values()
+
+	response, err := bot.request("sendPhoto", v)
+	if err != nil {
+		return Message{}, nil
+	}
+
+	var message Message
+	json.Unmarshal(response.Result, &message)
+
+	return message, nil
+}
+
 func (bot *Bot) request(method string, params url.Values) (Response, error) {
 	url := fmt.Sprintf(BaseURL, bot.Token, method)
 
