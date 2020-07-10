@@ -3,8 +3,12 @@ package main
 import (
 	"das-frama/dudes-bot/pkg/bot"
 	"das-frama/dudes-bot/pkg/command"
+	"das-frama/dudes-bot/pkg/config"
+	"das-frama/dudes-bot/pkg/sqlite"
 	"log"
 	"os"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
@@ -12,6 +16,26 @@ func main() {
 	token := os.Getenv("BOT_TOKEN")
 	if token == "" {
 		log.Fatalln("$BOT_TOKEN must be set.")
+	}
+
+	// Load config.
+	config, err := config.LoadConfig("config.json")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	log.Println("Read config: ", config)
+
+	// Open DB.
+	db, err := sqlite.LoadDB(config.DB.Path)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer db.Close()
+
+	// Migrate DB.
+	err = sqlite.Migrate(db, config.DB.Migrations)
+	if err != nil {
+		panic(err)
 	}
 
 	// Create telegram bot instance.
