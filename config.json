@@ -1,0 +1,11 @@
+{
+  "db": {
+    "path": "db/bot.db",
+    "migrations": "db/migrations/init.sql"
+  },
+  "personalities": {
+    "sasha": {
+      "firstWorkDay": "05.06.2020"
+    }
+  }
+}
