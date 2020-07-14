@@ -2,11 +2,20 @@ package command
 
 import (
 	"das-frama/dudes-bot/pkg/bot"
+	"fmt"
+	"strings"
+	"time"
 	// "s32x.com/ovrstat"
 )
 
+// HandlerConfig
+type HandlerConfig struct {
+	Update     *bot.Update
+	RowQueryer RowQueryer
+}
+
 // Start runs the bot in chat on the first run or if it's was previously stopped.
-func start(update bot.Update) Response {
+func start(params []string) (Result, error) {
 	// fileName := "data/chats.json"
 	// var chats []*bot.Chat
 
@@ -26,72 +35,74 @@ func start(update bot.Update) Response {
 	// _ = ioutil.WriteFile("data/chats.json", file, 0644)
 
 	// Text.
-	return Response{
+	return Result{
 		Text: "start",
-	}
+	}, nil
 }
 
-func stop(update bot.Update) Response {
-	return Response{
+func stop(params []string) (Result, error) {
+	return Result{
 		Text: "stop",
-	}
+	}, nil
 }
 
-func ping(update bot.Update) Response {
-	return Response{
+func ping(params []string) (Result, error) {
+	return Result{
 		Text: "pong",
-	}
+	}, nil
 }
 
-func schedule(update bot.Update) Response {
-	// workTime, err := time.Parse("02.01.2006", firstWorkDay)
-	// if err != nil {
-	// 	log.Fatalln(err)
-	// }
+// Schedule for Sasha.
+func schedule(params []string) (Result, error) {
+	var result Result
 
-	// var verb string
-	// if msg == "" {
-	// 	verb = "Сегодня"
-	// } else {
-	// 	verb = msg
-	// }
-
-	// currentTime := time.Now()
-	// switch msg {
-	// case "завтра":
-	// 	currentTime = currentTime.Add(time.Hour * 24)
-	// case "послезавтра":
-	// 	currentTime = currentTime.Add(time.Hour * 48)
-	// case "послепослезавтра":
-	// 	currentTime = currentTime.Add(time.Hour * 72)
-	// }
-
-	// hours := currentTime.Sub(workTime).Hours()
-	// days := int(hours / 24)
-
-	// var Text string
-	// if days%4 < 2 {
-	// 	Text = "%s Саша трудится в поте лица!"
-	// } else {
-	// 	Text = "%s Саша отдыхает! 😊😊😊"
-	// }
-
-	return Response{
-		// Text: fmt.Sprintf(Text, strings.Title(verb)),
-		Text: "schedule",
+	// Get first work day.
+	workTime, err := time.Parse("02.01.2006", "05.06.2020")
+	if err != nil {
+		return result, err
 	}
+
+	// Get word.
+	word := "сегодня"
+	if len(params) > 0 && params[0] != "" {
+		word = params[0]
+	}
+
+	// Find out word offset.
+	currentTime := time.Now()
+	switch word {
+	case "завтра":
+		currentTime = currentTime.Add(time.Hour * 24)
+	case "послезавтра":
+		currentTime = currentTime.Add(time.Hour * 48)
+	case "послепослезавтра":
+		currentTime = currentTime.Add(time.Hour * 72)
+	}
+
+	// Calculate days
+	days := int(currentTime.Sub(workTime).Hours() / 24)
+
+	var text string
+	if days%4 < 2 {
+		text = "%s Саша трудится в поте лица!"
+	} else {
+		text = "%s Саша отдыхает! 😊😊😊"
+	}
+	result.Text = fmt.Sprintf(text, strings.Title(word))
+
+	return result, nil
 }
 
-func call(update bot.Update) Response {
+func call(params []string) (Result, error) {
 	// Text := fmt.Sprintf("Мне поступила команда, чтобы я всех призвал %s.", msg)
 	// Text := fmt.Sprintf("Мне поступила команда, чтобы я всех призвал!")
-	return Response{
+	return Result{
 		// Text: Text,
 		Text: "call",
-	}
+	}, nil
 }
 
-func overwatch(update bot.Update) Response {
+func overwatch(params []string) (Result, error) {
 	// Text := "Я пока не умею отображать статистику всех членов нашей славной команды. Пожалуйста, вызовите эту команду ещё раз, но с упомянием кого-нибудь через `@`."
 	// users := update.Message.Mentions()
 	// if len(users) > 0 {
@@ -113,13 +124,13 @@ func overwatch(update bot.Update) Response {
 
 	// }
 
-	return Response{
+	return Result{
 		// Text: Text,
 		Text: "overwatch",
-	}
+	}, nil
 }
 
-func cat(update bot.Update) Response {
+func cat(params []string) (Result, error) {
 	// 	resp, err := http.Get("https://cataas.com/cat")
 
 	// 	buffer := &bytes.Buffer
@@ -129,7 +140,7 @@ func cat(update bot.Update) Response {
 	// 		log.Print(err)
 	// 	}
 
-	return Response{
+	return Result{
 		Text: "cat",
-	}
+	}, nil
 }

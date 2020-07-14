@@ -8,8 +8,8 @@ import (
 // Config main app configuration struct.
 type Config struct {
 	DB struct {
-		Path       string
-		Migrations string
+		Path string `json:"path"`
+		Init string `json:"init"`
 	}
 }
 

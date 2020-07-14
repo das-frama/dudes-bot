@@ -32,10 +32,10 @@ func main() {
 	}
 	defer db.Close()
 
-	// Migrate DB.
-	err = sqlite.Migrate(db, config.DB.Migrations)
+	// Init DB.
+	err = sqlite.Migrate(db, config.DB.Init)
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 
 	// Create telegram bot instance.
@@ -60,22 +60,24 @@ func main() {
 		// Log incoming message.
 		log.Printf("[%s] %s", update.Message.From.Username, update.Message.Text)
 
-		// If message is command.
+		// Check if message is command.
 		if update.Message.IsCommand() {
 			cmd := update.Message.Command()
-
-			// Procces command if possible.
-			response, err := command.Process(cmd, update)
+			params := update.Message.Params()
+			result, err := command.Process(cmd, params)
 			if err != nil {
-				log.Println(err.Error())
+				log.Println(err)
 			}
-
 			// Send message.
-			tgBot.SendMessage(bot.SendMessageConfig{
+			_, err = tgBot.SendMessage(bot.SendMessageConfig{
 				ChatID: update.Message.Chat.ID,
-				Text:   response.Text,
+				Text:   result.Text,
 			})
+			if err != nil {
+				log.Println(err)
+			}
 		}
+
 	}
 
 	log.Println("Shutting down...")

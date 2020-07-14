@@ -1,17 +1,16 @@
 package command
 
 import (
-	"das-frama/dudes-bot/pkg/bot"
 	"fmt"
 )
 
-// Response is a result of command process.
-type Response struct {
+// Result is a result of command process.
+type Result struct {
 	Text  string
 	Photo string
 }
 
-var commandMap = map[string]func(bot.Update) Response{
+var commandMap = map[string]func(params []string) (Result, error){
 	"start":     start,
 	"stop":      stop,
 	"ping":      ping,
@@ -22,11 +21,11 @@ var commandMap = map[string]func(bot.Update) Response{
 }
 
 // Process handles the command and returns a response struct.
-func Process(cmd string, update bot.Update) (Response, error) {
+func Process(cmd string, params []string) (Result, error) {
 	fn, ok := commandMap[cmd]
 	if !ok {
-		return Response{}, fmt.Errorf("wrong command")
+		return Result{}, fmt.Errorf("wrong command")
 	}
 
-	return fn(update), nil
+	return fn(params)
 }

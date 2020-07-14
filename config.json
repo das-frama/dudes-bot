@@ -1,7 +1,10 @@
 {
+  "bot": {
+    "mode": "longpolling"
+  },
   "db": {
     "path": "db/bot.db",
-    "migrations": "db/migrations/init.sql"
+    "init": "db/migrations/init.sql"
   },
   "personalities": {
     "sasha": {

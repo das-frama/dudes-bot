@@ -5,6 +5,7 @@ import (
 	"strconv"
 )
 
+// UpdateConfig stands for config for Update method.
 type UpdateConfig struct {
 	Offset  int
 	Limit   int

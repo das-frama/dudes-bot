@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -14,10 +15,12 @@ import (
 // BaseURL is base url for telegram api.
 const BaseURL = "https://api.telegram.org/bot%s/%s"
 
+// Bot struct represents a single bot.
 type Bot struct {
 	Token  string
 	Buffer int
 
+	db              *sql.DB
 	shutdownChannel chan interface{}
 }
 

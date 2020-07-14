@@ -224,7 +224,7 @@ func (m *Message) Params() []string {
 	}
 
 	entity := (*m.Entities)[0]
-	return strings.Split(m.Text[entity.Length:], " ")
+	return strings.Split(strings.TrimSpace(m.Text[entity.Length:]), " ")
 }
 
 func (m *Message) Mentions() []string {

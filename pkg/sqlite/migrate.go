@@ -3,10 +3,9 @@ package sqlite
 import (
 	"database/sql"
 	"io/ioutil"
-	"log"
 )
 
-// Migrate
+// Migrate is read init sql file.
 func Migrate(db *sql.DB, path string) error {
 	file, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -14,11 +13,10 @@ func Migrate(db *sql.DB, path string) error {
 	}
 
 	// Exec sql.
-	result, err := db.Exec(string(file))
+	_, err = db.Exec(string(file))
 	if err != nil {
 		return err
 	}
-	log.Println(result)
 
 	return nil
 }
