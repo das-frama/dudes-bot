@@ -5,6 +5,7 @@ import (
 	"das-frama/dudes-bot/pkg/command"
 	"das-frama/dudes-bot/pkg/config"
 	"das-frama/dudes-bot/pkg/sqlite"
+	"database/sql"
 	"log"
 	"os"
 
@@ -18,27 +19,29 @@ func main() {
 		log.Fatalln("$BOT_TOKEN must be set.")
 	}
 
-	// Load config.
-	config, err := config.LoadConfig("config.json")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	log.Println("Read config: ", config)
-
-	// Open DB.
-	db, err := sqlite.LoadDB(config.DB.Path)
-	if err != nil {
-		log.Fatalln(err)
-	}
-	defer db.Close()
-
-	// Init DB.
-	err = sqlite.Migrate(db, config.DB.Init)
+	// Config.
+	cfg, err := config.LoadConfig("config.json")
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	// Create telegram bot instance.
+	// Setup dependencies.
+	// DB Conn.
+	conn, err := sql.Open("sqlite3", cfg.DB.Path)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer conn.Close()
+
+	// DB struct.
+	db := sqlite.New(conn)
+	// Init schema.
+	err = db.InitSchema(cfg.DB.Init)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	// Create telegram bot object.
 	tgBot := bot.New(token)
 
 	// Get updates channel.
@@ -56,6 +59,9 @@ func main() {
 		if update.Message == nil {
 			continue
 		}
+		// if ok, err := db.IsChatActive(update.Message.Chat.ID); !ok && err == nil {
+		// continue
+		// }
 
 		// Log incoming message.
 		log.Printf("[%s] %s", update.Message.From.Username, update.Message.Text)
@@ -63,8 +69,7 @@ func main() {
 		// Check if message is command.
 		if update.Message.IsCommand() {
 			cmd := update.Message.Command()
-			params := update.Message.Params()
-			result, err := command.Process(cmd, params)
+			result, err := command.Process(cmd, update.Message, db, cfg)
 			if err != nil {
 				log.Println(err)
 			}

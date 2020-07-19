@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS "chats" (
     "first_name"     TEXT,
     "last_name"      TEXT,
     "description"    TEXT,
-    "pinned_message" TEXT
+    "pinned_message" TEXT,
+    "is_active"      INTEGER DEFAULT 1
 );
 
 CREATE TABLE IF NOT EXISTS "me" (
