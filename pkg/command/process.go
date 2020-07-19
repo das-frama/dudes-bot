@@ -23,6 +23,7 @@ type Result struct {
 var commandMap = map[string]func(commandConfig) (Result, error){
 	"start":     start,
 	"stop":      stop,
+	"help":      help,
 	"ping":      ping,
 	"schedule":  schedule,
 	"call":      call,
