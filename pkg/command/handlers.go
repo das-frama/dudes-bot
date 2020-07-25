@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"strings"
 	"time"
 
@@ -18,6 +19,9 @@ const helpText = `
 /overwatch [@участник] - Статистика игроков в Overwatch;
 /cat - Призвать котика;
 `
+
+const catURL = "https://cataas.com/cat"
+const dogURL = "https://placedog.net/500"
 
 // Start runs the bot in chat on the first run or if it's was previously stopped.
 func start(cfg commandConfig) (Result, error) {
@@ -80,12 +84,18 @@ func schedule(cfg commandConfig) (Result, error) {
 	// Find out word offset.
 	currentTime := time.Now()
 	switch word {
+	case "позапозавчера":
+		currentTime = currentTime.Add(time.Hour * 24 * -3)
+	case "позавчера":
+		currentTime = currentTime.Add(time.Hour * 24 * -2)
+	case "вчера":
+		currentTime = currentTime.Add(time.Hour * 24 * -1)
 	case "завтра":
 		currentTime = currentTime.Add(time.Hour * 24)
 	case "послезавтра":
-		currentTime = currentTime.Add(time.Hour * 48)
+		currentTime = currentTime.Add(time.Hour * 24 * 2)
 	case "послепослезавтра":
-		currentTime = currentTime.Add(time.Hour * 72)
+		currentTime = currentTime.Add(time.Hour * 24 * 3)
 	}
 
 	// Calculate days
@@ -145,17 +155,32 @@ func overwatch(cfg commandConfig) (Result, error) {
 }
 
 func cat(cfg commandConfig) (Result, error) {
-	// 	resp, err := http.Get("https://cataas.com/cat")
+	result := Result{
+		PhotoURL: catURL,
+	}
 
-	// 	buffer := &bytes.Buffer
-	// 	w := multipart.NewWriter(buffer)
-	// 	part := w.create
-	// 	if err != nil {
-	// 		log.Print(err)
-	// 	}
+	// Retrieve joke.
+	joke, err := cfg.Queryer.QueryRandomCatJoke()
+	if err != nil {
+		return result, err
+	}
+	if joke.Text != "" {
+		result.PhotoURL = fmt.Sprintf("%s/says/%s", result.PhotoURL, joke.Text)
+		fmt.Println(result.PhotoURL)
+	}
+
+	// Random seed number for new image to appear.
+	rand := rand.Int()
+	result.PhotoURL = fmt.Sprintf("%s?seed=%d", result.PhotoURL, rand)
+
+	return result, nil
+}
+
+func dog(cfg commandConfig) (Result, error) {
+	url := fmt.Sprintf("%s?random&seed=%d", dogURL, rand.Int())
 
 	return Result{
-		Text: "cat",
+		PhotoURL: url,
 	}, nil
 }
 

@@ -37,3 +37,15 @@ CREATE TABLE IF NOT EXISTS "users" (
     "username"      TEXT,
     "language_code" TEXT
 );
+
+CREATE TABLE IF NOT EXISTS "cat_jokes" (
+    "id"   INTEGER NOT NULL PRIMARY KEY,
+    "text" TEXT,
+    "day"  TEXT
+);
+
+-- CREATE TABLE IF NOT EXISTS "spotify_seeds" (
+--     "id"  INTEGER NOT NULL PRIMARY KEY,
+--     "href" TEXT,
+--     "name" TEXT
+-- );

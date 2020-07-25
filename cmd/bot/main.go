@@ -74,12 +74,22 @@ func main() {
 				log.Println(err)
 			}
 			// Send message.
-			_, err = tgBot.SendMessage(bot.SendMessageConfig{
-				ChatID: update.Message.Chat.ID,
-				Text:   result.Text,
-			})
-			if err != nil {
-				log.Println(err)
+			if result.Text != "" {
+				_, err = tgBot.SendMessage(bot.SendMessageConfig{
+					ChatID: update.Message.Chat.ID,
+					Text:   result.Text,
+				})
+				if err != nil {
+					log.Println(err)
+				}
+			} else if result.PhotoURL != "" {
+				_, err = tgBot.SendPhoto(bot.SendPhotoConfig{
+					ChatID: update.Message.Chat.ID,
+					Photo:  result.PhotoURL,
+				})
+				if err != nil {
+					log.Println(err)
+				}
 			}
 		}
 

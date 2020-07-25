@@ -16,8 +16,9 @@ type commandConfig struct {
 
 // Result is a result of command process.
 type Result struct {
-	Text  string
-	Photo string
+	Text      string
+	PhotoURL  string
+	PhotoData []byte
 }
 
 var commandMap = map[string]func(commandConfig) (Result, error){
@@ -29,6 +30,7 @@ var commandMap = map[string]func(commandConfig) (Result, error){
 	"call":      call,
 	"overwatch": overwatch,
 	"cat":       cat,
+	"dog":       dog,
 }
 
 // Process handles the command and returns a response struct.

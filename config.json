@@ -6,9 +6,22 @@
     "path": "db/bot.db",
     "init": "db/migrations/init.sql"
   },
-  "personalities": {
-    "sasha": {
-      "firstWorkDay": "05.06.2020"
+  "people": {
+    "@nickmann": {
+      "name": "Никита",
+      "battletag": "Niko-24407"
+    },
+    "@Who_knowsme": {
+      "name": "Чача",
+      "battletag": "Sash-22727"
+    },
+    "@das_frama": {
+      "name": "Андрей",
+      "battletag": "frama-2174"
+    },
+    "@unknow2n": {
+      "name": "Аня",
+      "battletag": "Unknown-2833"
     }
   }
 }

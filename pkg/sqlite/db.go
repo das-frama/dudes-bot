@@ -11,6 +11,7 @@ type Queryer interface {
 	IsChatActive(int) (bool, error)
 	GetOrCreateChat(*bot.Chat) (Chat, bool, error)
 	StopChat(int) error
+	QueryRandomCatJoke() (CatJoke, error)
 }
 
 type db struct {
@@ -118,4 +119,16 @@ func (db *db) GetOrCreateChat(bc *bot.Chat) (Chat, bool, error) {
 func (db *db) StopChat(id int) error {
 	_, err := db.conn.Exec("UPDATE chats SET is_active = 0")
 	return err
+}
+
+func (db *db) QueryRandomCatJoke() (CatJoke, error) {
+	var joke CatJoke
+
+	// Prepare row.
+	row := db.conn.QueryRow("SELECT * FROM cat_jokes ORDER BY RANDOM() LIMIT 1")
+	if err := row.Scan(&joke.ID, &joke.Text, &joke.Day); err != nil {
+		return joke, err
+	}
+
+	return joke, nil
 }

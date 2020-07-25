@@ -11,6 +11,12 @@ type Config struct {
 		Path string `json:"path"`
 		Init string `json:"init"`
 	}
+	People map[string]Person
+}
+
+type Person struct {
+	Name      string `json:"name"`
+	BattleTag string `json:"battletag"`
 }
 
 // LoadConfig creates a struct from file.
