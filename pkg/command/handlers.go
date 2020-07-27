@@ -18,10 +18,13 @@ const helpText = `
 /schedule [день] - Работает ли сегодня Саша;
 /overwatch [@участник] - Статистика игроков в Overwatch;
 /cat - Призвать котика;
+/dog - Призвать пёселя;
+/panda - Призвать панду;
 `
 
 const catURL = "https://cataas.com/cat"
 const dogURL = "https://placedog.net/500"
+const pandaURL = "https://loremflickr.com/500/500/panda"
 
 // Start runs the bot in chat on the first run or if it's was previously stopped.
 func start(cfg commandConfig) (Result, error) {
@@ -178,6 +181,14 @@ func cat(cfg commandConfig) (Result, error) {
 
 func dog(cfg commandConfig) (Result, error) {
 	url := fmt.Sprintf("%s?random&seed=%d", dogURL, rand.Int())
+
+	return Result{
+		PhotoURL: url,
+	}, nil
+}
+
+func panda(cfg commandConfig) (Result, error) {
+	url := fmt.Sprintf("%s?random=1", pandaURL)
 
 	return Result{
 		PhotoURL: url,
