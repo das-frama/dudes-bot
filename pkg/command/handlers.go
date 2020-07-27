@@ -162,19 +162,25 @@ func cat(cfg commandConfig) (Result, error) {
 		PhotoURL: catURL,
 	}
 
-	// Retrieve joke.
-	joke, err := cfg.Queryer.QueryRandomCatJoke()
-	if err != nil {
-		return result, err
+	// If query was made by Anna.
+	if cfg.Message.From.Username == "unknow2n" {
+		joke := "Когда Аня пытается понять в чём прикол"
+		catURL := "https://cataas.com/cat/5ef820f05bc3fa0010444489"
+		result.PhotoURL = fmt.Sprintf("%s/says/%s", catURL, joke)
+	} else {
+		// Retrieve joke.
+		joke, err := cfg.Queryer.QueryRandomCatJoke()
+		if err != nil {
+			return result, err
+		}
+		if joke.Text != "" {
+			result.PhotoURL = fmt.Sprintf("%s/says/%s", result.PhotoURL, joke.Text)
+			fmt.Println(result.PhotoURL)
+		}
+		// Random seed number for new image to appear.
+		rand := rand.Int()
+		result.PhotoURL = fmt.Sprintf("%s?seed=%d", result.PhotoURL, rand)
 	}
-	if joke.Text != "" {
-		result.PhotoURL = fmt.Sprintf("%s/says/%s", result.PhotoURL, joke.Text)
-		fmt.Println(result.PhotoURL)
-	}
-
-	// Random seed number for new image to appear.
-	rand := rand.Int()
-	result.PhotoURL = fmt.Sprintf("%s?seed=%d", result.PhotoURL, rand)
 
 	return result, nil
 }
