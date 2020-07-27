@@ -188,7 +188,7 @@ func dog(cfg commandConfig) (Result, error) {
 }
 
 func panda(cfg commandConfig) (Result, error) {
-	url := fmt.Sprintf("%s?random=1", pandaURL)
+	url := fmt.Sprintf("%s?random=%d", pandaURL, rand.Int())
 
 	return Result{
 		PhotoURL: url,
