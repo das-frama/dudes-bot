@@ -32,6 +32,7 @@ var commandMap = map[string]func(commandConfig) (Result, error){
 	"cat":       cat,
 	"dog":       dog,
 	"panda":     panda,
+	"meme":      meme,
 }
 
 // Process handles the command and returns a response struct.

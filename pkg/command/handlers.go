@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"math/rand"
+	"net/http"
 	"strings"
 	"time"
 
@@ -25,6 +26,7 @@ const helpText = `
 const catURL = "https://cataas.com/cat"
 const dogURL = "https://placedog.net/500"
 const pandaURL = "https://loremflickr.com/500/500/panda"
+const memeURL = "https://meme-api.herokuapp.com/gimme"
 
 // Start runs the bot in chat on the first run or if it's was previously stopped.
 func start(cfg commandConfig) (Result, error) {
@@ -199,6 +201,22 @@ func panda(cfg commandConfig) (Result, error) {
 	return Result{
 		PhotoURL: url,
 	}, nil
+}
+
+func meme(cfg commandConfig) (Result, error) {
+	var result Result
+
+	resp, err := http.Get(memeURL)
+	if err != nil {
+		return result, err
+	}
+	defer resp.Body.Close()
+
+	var meme MemeResponse
+	json.NewDecoder(resp.Body).Decode(&meme)
+	result.PhotoURL = meme.URL
+
+	return result, nil
 }
 
 func help(cfg commandConfig) (Result, error) {
