@@ -71,6 +71,7 @@ func main() {
 			cmd := update.Message.Command()
 			result, err := command.Process(cmd, update.Message, db, cfg)
 			if err != nil {
+				result.Text = command.UcFirst(err.Error()) + "."
 				log.Println(err)
 			}
 			// Send message.

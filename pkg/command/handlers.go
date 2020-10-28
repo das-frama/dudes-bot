@@ -72,7 +72,7 @@ func schedule(cfg commandConfig) (Result, error) {
 	var result Result
 
 	// Get first work day.
-	workTime, err := time.Parse("02.01.2006", "05.06.2020")
+	workDate, err := time.Parse("2006-01-02 MST", "2020-10-27 MSK")
 	if err != nil {
 		return result, err
 	}
@@ -87,32 +87,60 @@ func schedule(cfg commandConfig) (Result, error) {
 	}
 
 	// Find out word offset.
-	currentTime := time.Now()
+	var nextDate time.Time
+	now := time.Now()
+	isDate := false
+	isNextYear := false
 	switch word {
+	case "сегодня":
+		nextDate = now
 	case "позапозавчера":
-		currentTime = currentTime.Add(time.Hour * 24 * -3)
+		nextDate = now.Add(time.Hour * 24 * -3)
 	case "позавчера":
-		currentTime = currentTime.Add(time.Hour * 24 * -2)
+		nextDate = now.Add(time.Hour * 24 * -2)
 	case "вчера":
-		currentTime = currentTime.Add(time.Hour * 24 * -1)
+		nextDate = now.Add(time.Hour * 24 * -1)
 	case "завтра":
-		currentTime = currentTime.Add(time.Hour * 24)
+		nextDate = now.Add(time.Hour * 24)
 	case "послезавтра":
-		currentTime = currentTime.Add(time.Hour * 24 * 2)
+		nextDate = now.Add(time.Hour * 24 * 2)
 	case "послепослезавтра":
-		currentTime = currentTime.Add(time.Hour * 24 * 3)
+		nextDate = now.Add(time.Hour * 24 * 3)
+	default:
+		word = fmt.Sprintf("%s.%d %s MSK", word, now.Year(), now.Format("03:04:05.999999999"))
+		if nextDate, err = time.Parse("02.01.2006 03:04:05.999999999 MST", word); err != nil {
+			return result, ErrWrongDateFormat
+		}
+		if nextDate.Before(now) {
+			nextDate = nextDate.AddDate(1, 0, 0)
+			isNextYear = true
+		}
+		isDate = true
 	}
 
 	// Calculate days
-	days := int(currentTime.Sub(workTime).Hours() / 24)
+	days := int(nextDate.Sub(workDate).Hours() / 24)
 
+	// Found out what text should be displayed.
 	var text string
 	if days%4 < 2 {
-		text = "%s Саша трудится в поте лица!"
+		text = "Саша трудится в поте лица!"
+	} else if nextDate.Day() == 10 && nextDate.Month() == time.November {
+		text = "Саша отдыхает, но встречать Андрея не поедет! 😢😢😢"
 	} else {
-		text = "%s Саша отдыхает! 😊😊😊"
+		text = "Саша отдыхает! 😊😊😊"
 	}
-	result.Text = fmt.Sprintf(text, strings.Title(word))
+
+	// Fill up the result struct.
+	if isDate {
+		if isNextYear {
+			result.Text = fmt.Sprintf("%d %s %d %s", nextDate.Day(), months[nextDate.Month()-1], nextDate.Year(), text)
+		} else {
+			result.Text = fmt.Sprintf("%d %s %s", nextDate.Day(), months[nextDate.Month()-1], text)
+		}
+	} else {
+		result.Text = fmt.Sprintf("%s %s", strings.Title(word), text)
+	}
 
 	return result, nil
 }
