@@ -107,16 +107,26 @@ func schedule(cfg commandConfig) (Result, error) {
 	case "послепослезавтра":
 		nextDate = now.Add(time.Hour * 24 * 3)
 	default:
-		word = fmt.Sprintf("%s.%d %s MSK", word, now.Year(), now.Format("03:04:05.999999999"))
-		if nextDate, err = time.Parse("02.01.2006 03:04:05.999999999 MST", word); err != nil {
+		parts := strings.Split(word, ".")
+		var dateStr string
+		if len(parts) == 2 {
+			dateStr = fmt.Sprintf("%s.%d %s MSK", word, now.Year(), now.Format("15:04:05.999999999"))
+		} else if len(parts) == 3 {
+			dateStr = fmt.Sprintf("%s %s MSK", word, now.Format("15:04:05.999999999"))
+		}
+		if nextDate, err = time.Parse("02.01.2006 15:04:05.999999999 MST", dateStr); err != nil {
 			return result, ErrWrongDateFormat
 		}
 		if nextDate.Before(now) {
 			nextDate = nextDate.AddDate(1, 0, 0)
+		}
+		if nextDate.Year() > now.Year() {
 			isNextYear = true
 		}
 		isDate = true
 	}
+
+	fmt.Println(nextDate.String())
 
 	// Calculate days
 	days := int(nextDate.Sub(workDate).Hours() / 24)
