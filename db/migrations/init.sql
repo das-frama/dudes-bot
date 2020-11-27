@@ -44,8 +44,8 @@ CREATE TABLE IF NOT EXISTS "cat_jokes" (
     "day"  TEXT
 );
 
--- CREATE TABLE IF NOT EXISTS "spotify_seeds" (
---     "id"  INTEGER NOT NULL PRIMARY KEY,
---     "href" TEXT,
---     "name" TEXT
--- );
+CREATE TABLE IF NOT EXISTS "poetry" (
+    "id"   INTEGER NOT NULL PRIMARY KEY,
+    "text" TEXT,
+    "type" INTEGER
+);

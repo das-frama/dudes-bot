@@ -11,11 +11,13 @@ type Config struct {
 		Path string `json:"path"`
 		Init string `json:"init"`
 	}
-	People map[string]Person
+	People []Person
 }
 
+// Person struct is representation of participant of chat's room.
 type Person struct {
 	Name      string `json:"name"`
+	Telegram  string `json:"telegram"`
 	BattleTag string `json:"battletag"`
 }
 

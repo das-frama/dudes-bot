@@ -262,3 +262,32 @@ func help(cfg commandConfig) (Result, error) {
 		Text: helpText,
 	}, nil
 }
+
+func poetry(cfg commandConfig) (Result, error) {
+	var result Result
+
+	poetry1, err := cfg.Queryer.QueryRandomPoetry(1)
+	if err != nil {
+		return result, err
+	}
+	poetry2, err := cfg.Queryer.QueryRandomPoetry(2)
+	if err != nil {
+		return result, err
+	}
+	poetry3, err := cfg.Queryer.QueryRandomPoetry(3)
+	if err != nil {
+		return result, err
+	}
+	poetry4, err := cfg.Queryer.QueryRandomPoetry(4)
+	if err != nil {
+		return result, err
+	}
+	poetry5, err := cfg.Queryer.QueryRandomPoetry(5)
+	if err != nil {
+		return result, err
+	}
+
+	result.Text = fmt.Sprintf("%s %s\n%s,\n%s %s.", poetry1.Text, poetry2.Text, poetry3.Text, poetry4.Text, poetry5.Text)
+
+	return result, nil
+}

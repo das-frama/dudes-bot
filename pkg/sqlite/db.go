@@ -4,6 +4,7 @@ import (
 	"das-frama/dudes-bot/pkg/bot"
 	"database/sql"
 	"io/ioutil"
+	"strings"
 )
 
 type Queryer interface {
@@ -12,6 +13,7 @@ type Queryer interface {
 	GetOrCreateChat(*bot.Chat) (Chat, bool, error)
 	StopChat(int) error
 	QueryRandomCatJoke() (CatJoke, error)
+	QueryRandomPoetry(int) (Poetry, error)
 }
 
 type db struct {
@@ -131,4 +133,17 @@ func (db *db) QueryRandomCatJoke() (CatJoke, error) {
 	}
 
 	return joke, nil
+}
+
+func (db *db) QueryRandomPoetry(t int) (Poetry, error) {
+	var poetry Poetry
+
+	// Prepare row.
+	row := db.conn.QueryRow("SELECT * FROM poetry WHERE type=? ORDER BY RANDOM() LIMIT 1", t)
+	if err := row.Scan(&poetry.ID, &poetry.Text, &poetry.Type); err != nil {
+		return poetry, err
+	}
+	poetry.Text = strings.TrimSpace(poetry.Text)
+
+	return poetry, nil
 }

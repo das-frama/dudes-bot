@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"bytes"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -8,7 +9,6 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
-	"strings"
 	"time"
 )
 
@@ -81,7 +81,12 @@ func (bot *Bot) GetUpdates(config UpdateConfig) ([]Update, error) {
 		v.Add("timeout", strconv.Itoa(config.Timeout))
 	}
 
-	response, err := bot.request("getUpdates", v)
+	jsonStr, err := json.Marshal(v)
+	if err != nil {
+		return []Update{}, err
+	}
+
+	response, err := bot.request("getUpdates", jsonStr)
 	if err != nil {
 		return []Update{}, err
 	}
@@ -94,13 +99,20 @@ func (bot *Bot) GetUpdates(config UpdateConfig) ([]Update, error) {
 
 // SendMessage send text messages. On success, the sent Message is returned.
 func (bot *Bot) SendMessage(config SendMessageConfig) (Message, error) {
-	v, _ := config.values()
-
-	response, err := bot.request("sendMessage", v)
+	// Prepare json string.
+	jsonStr, err := json.Marshal(config)
 	if err != nil {
-		return Message{}, nil
+		return Message{}, err
+	}
+	fmt.Println(bytes.NewBuffer(jsonStr))
+
+	// Send request to telegram.
+	response, err := bot.request("sendMessage", jsonStr)
+	if err != nil {
+		return Message{}, err
 	}
 
+	// Unmarshal response.
 	var message Message
 	json.Unmarshal(response.Result, &message)
 
@@ -109,9 +121,12 @@ func (bot *Bot) SendMessage(config SendMessageConfig) (Message, error) {
 
 // SendPhoto send text messages. On success, the sent Message is returned.
 func (bot *Bot) SendPhoto(config SendPhotoConfig) (Message, error) {
-	v, _ := config.values()
+	jsonStr, err := json.Marshal(config)
+	if err != nil {
+		return Message{}, err
+	}
 
-	response, err := bot.request("sendPhoto", v)
+	response, err := bot.request("sendPhoto", jsonStr)
 	if err != nil {
 		return Message{}, nil
 	}
@@ -122,10 +137,10 @@ func (bot *Bot) SendPhoto(config SendPhotoConfig) (Message, error) {
 	return message, nil
 }
 
-func (bot *Bot) request(method string, params url.Values) (Response, error) {
+func (bot *Bot) request(method string, jsonBody []byte) (Response, error) {
 	url := fmt.Sprintf(BaseURL, bot.Token, method)
 
-	resp, err := http.Post(url, "application/x-www-form-urlencoded", strings.NewReader(params.Encode()))
+	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonBody))
 	if err != nil {
 		return Response{}, err
 	}
@@ -138,7 +153,7 @@ func (bot *Bot) request(method string, params url.Values) (Response, error) {
 	}
 
 	if !response.Ok {
-		return response, fmt.Errorf("not ok")
+		return response, fmt.Errorf(response.Description)
 	}
 
 	return response, nil

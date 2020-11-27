@@ -19,3 +19,10 @@ type CatJoke struct {
 	Text string
 	Day  string
 }
+
+// Poetry represents a db record for poetry table.
+type Poetry struct {
+	ID   int
+	Text string
+	Type int
+}

@@ -6,22 +6,26 @@
     "path": "db/bot.db",
     "init": "db/migrations/init.sql"
   },
-  "people": {
-    "@nickmann": {
+  "people": [
+    {
       "name": "Никита",
+      "telegram": "@nickmann",
       "battletag": "Niko-24407"
     },
-    "@Who_knowsme": {
+    {
       "name": "Чача",
+      "telegram": "@Who_knowsme",
       "battletag": "Sash-22727"
     },
-    "@das_frama": {
+    {
       "name": "Андрей",
+      "telegram": "@das_frama",
       "battletag": "frama-2174"
     },
-    "@unknow2n": {
+    {
       "name": "Аня",
+      "telegram": "@unknow2n",
       "battletag": "Unknown-2833"
     }
-  }
+  ]
 }
