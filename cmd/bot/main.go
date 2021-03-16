@@ -47,7 +47,7 @@ func main() {
 	// Get updates channel.
 	updates, err := tgBot.GetUpdatesChan(bot.UpdateConfig{
 		Offset:  0,
-		Limit:   0,
+		Limit:   100,
 		Timeout: 60,
 	})
 	if err != nil {

@@ -65,7 +65,7 @@ func (bot *Bot) GetUpdatesChan(config UpdateConfig) (UpdatesChannel, error) {
 	return ch, nil
 }
 
-// GetUpdates eceive incoming updates using long polling (wiki). An Array of Update objects is returned.
+// GetUpdates receive incoming updates using long polling (wiki). An Array of Update objects is returned.
 func (bot *Bot) GetUpdates(config UpdateConfig) ([]Update, error) {
 	jsonStr, err := json.Marshal(config)
 	if err != nil {
@@ -78,7 +78,10 @@ func (bot *Bot) GetUpdates(config UpdateConfig) ([]Update, error) {
 	}
 
 	var updates []Update
-	json.Unmarshal(response.Result, &updates)
+	err = json.Unmarshal(response.Result, &updates)
+	if err != nil {
+		return []Update{}, err
+	}
 
 	return updates, nil
 }
@@ -100,7 +103,10 @@ func (bot *Bot) SendMessage(config SendMessageConfig) (Message, error) {
 
 	// Unmarshal response.
 	var message Message
-	json.Unmarshal(response.Result, &message)
+	err = json.Unmarshal(response.Result, &message)
+	if err != nil {
+		return Message{}, err
+	}
 
 	return message, nil
 }
@@ -124,9 +130,9 @@ func (bot *Bot) SendPhoto(config SendPhotoConfig) (Message, error) {
 }
 
 func (bot *Bot) request(method string, jsonBody []byte) (Response, error) {
-	url := fmt.Sprintf(BaseURL, bot.Token, method)
+	urlStr := fmt.Sprintf(BaseURL, bot.Token, method)
 
-	resp, err := http.Post(url, "application/json", bytes.NewBuffer(jsonBody))
+	resp, err := http.Post(urlStr, "application/json", bytes.NewBuffer(jsonBody))
 	if err != nil {
 		return Response{}, err
 	}
