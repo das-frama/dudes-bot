@@ -2,9 +2,9 @@ package bot
 
 // UpdateConfig stands for config for Update method.
 type UpdateConfig struct {
-	Offset  int
-	Limit   int
-	Timeout int
+	Offset  int `json:"offset,omitempty"`
+	Limit   int `json:"limit,omitempty"`
+	Timeout int `json:"timeout,omitempty"`
 }
 
 type SendMessageConfig struct {
