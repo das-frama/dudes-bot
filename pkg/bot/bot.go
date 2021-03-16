@@ -7,8 +7,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
-	"strconv"
 	"time"
 )
 
@@ -69,19 +67,7 @@ func (bot *Bot) GetUpdatesChan(config UpdateConfig) (UpdatesChannel, error) {
 
 // GetUpdates eceive incoming updates using long polling (wiki). An Array of Update objects is returned.
 func (bot *Bot) GetUpdates(config UpdateConfig) ([]Update, error) {
-	v := url.Values{}
-
-	if config.Offset != 0 {
-		v.Add("offset", strconv.Itoa(config.Offset))
-	}
-	if config.Limit > 0 {
-		v.Add("limit", strconv.Itoa(config.Limit))
-	}
-	if config.Timeout > 0 {
-		v.Add("timeout", strconv.Itoa(config.Timeout))
-	}
-
-	jsonStr, err := json.Marshal(v)
+	jsonStr, err := json.Marshal(config)
 	if err != nil {
 		return []Update{}, err
 	}

@@ -26,7 +26,7 @@ var commandMap = map[string]func(commandConfig) (Result, error){
 	"stop":      stop,
 	"help":      help,
 	"ping":      ping,
-	"schedule":  schedule,
+	"schedule":  scheduleFake,
 	"call":      call,
 	"overwatch": overwatch,
 	"cat":       cat,

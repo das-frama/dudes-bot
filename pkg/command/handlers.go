@@ -67,6 +67,12 @@ func ping(cfg commandConfig) (Result, error) {
 	}, nil
 }
 
+func scheduleFake(cfg commandConfig) (Result, error) {
+	return Result{
+		Text: "Какая разница?",
+	}, nil
+}
+
 // Schedule for Sasha.
 func schedule(cfg commandConfig) (Result, error) {
 	var result Result
